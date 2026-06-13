@@ -1,0 +1,63 @@
+services:
+  frontend:
+    image: nginx:alpine
+    container_name: inventory_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+    networks:
+      - inventory_net
+
+  backend:
+    build: .
+    container_name: inventory_backend
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - inventory_net
+
+  db:
+    image: mariadb:11.4
+    container_name: inventory_mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root12345
+      MARIADB_DATABASE: inventory_db
+      MARIADB_USER: inventory_user
+      MARIADB_PASSWORD: inventory_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - inventory_mariadb_data:/var/lib/mysql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - inventory_net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: inventory_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - inventory_net
+
+volumes:
+  inventory_mariadb_data:
+
+networks:
+  inventory_net:
