@@ -25,6 +25,8 @@ class InventoryHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path == "/api/employees":
             self.handle_create_employee()
+        elif self.path == "/api/assets":
+            self.handle_create_asset()
         else:
             self.send_json_response(404, {"error": "Endpoint not found"})
 
@@ -50,6 +52,24 @@ class InventoryHandler(BaseHTTPRequestHandler):
         }
 
         self.send_json_response(200, response)
+        
+    def handle_create_asset(self):
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_length)
+
+        try:
+            data = json.loads(body.decode("utf-8"))
+        except json.JSONDecodeError:
+            self.send_json_response(400, {"error": "Invalid JSON"})
+            return
+
+        service = AssetService()
+        result = service.create_asset(data)
+
+        if result.get("success"):
+            self.send_json_response(201, result)
+        else:
+            self.send_json_response(400, result)
 
     def handle_get_employees(self):
         service = EmployeeService()

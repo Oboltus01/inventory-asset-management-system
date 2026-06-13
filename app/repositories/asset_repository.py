@@ -53,3 +53,28 @@ class AssetRepository:
         finally:
             cursor.close()
             connection.close()
+            
+    def create_asset(self, name, category_id, employee_id, status):
+        connection = self.db.get_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        sql = """
+            INSERT INTO assets (name, category_id, employee_id, status)
+            VALUES (%s, %s, %s, %s);
+        """
+
+        cursor.execute(sql, (name, category_id, employee_id, status))
+        connection.commit()
+
+        new_id = cursor.lastrowid
+
+        cursor.close()
+        connection.close()
+
+        return {
+            "id": new_id,
+            "name": name,
+            "category_id": category_id,
+            "employee_id": employee_id,
+            "status": status
+        }
