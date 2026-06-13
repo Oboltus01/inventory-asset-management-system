@@ -6,13 +6,20 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Inventory Asset Management System</h1>
-    <p>Frontend container работает.</p>
 
-    <button onclick="checkBackend()">Проверить backend</button>
+    <h1>Inventory Asset Management System</h1>
+
+    <div class="buttons">
+        <button onclick="loadHealth()">Health</button>
+        <button onclick="loadAssets()">Assets</button>
+        <button onclick="loadEmployees()">Employees</button>
+        <button onclick="loadProcurement()">Procurement</button>
+        <button onclick="loadReport()">Report</button>
+    </div>
 
     <pre id="result"></pre>
 
     <script src="js/script.js"></script>
+
 </body>
 </html>

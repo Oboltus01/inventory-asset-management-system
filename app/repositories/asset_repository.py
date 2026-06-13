@@ -17,13 +17,17 @@ class AssetRepository:
 
             sql = """
                 SELECT
-                    id,
-                    name,
-                    category_id,
-                    employee_id,
-                    status
-                FROM assets
-                ORDER BY id;
+                    a.id,
+                    a.name,
+                    a.category_id,
+                    c.name AS category_name,
+                    a.employee_id,
+                    e.full_name AS employee_name,
+                    a.status
+                FROM assets a
+                JOIN categories c ON a.category_id = c.id
+                LEFT JOIN employees e ON a.employee_id = e.id
+                ORDER BY a.id;
             """
 
             cursor.execute(sql)
@@ -36,9 +40,11 @@ class AssetRepository:
                     asset_id=row["id"],
                     name=row["name"],
                     category_id=row["category_id"],
+                    category_name=row.get("category_name"),
                     employee_id=row["employee_id"],
+                    employee_name=row.get("employee_name"),
                     status=row["status"],
-                    location=None,
+                    location=row.get("employee_name"),
                 )
                 assets.append(asset.to_dict())
 
