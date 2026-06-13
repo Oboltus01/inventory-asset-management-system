@@ -8,7 +8,7 @@ from services.procurement_service import ProcurementService
 from services.report_service import ReportService
 
 class InventoryHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_GET(self):        
         if self.path == "/api/health":
             self.handle_health()
         elif self.path == "/api/assets":
@@ -19,6 +19,12 @@ class InventoryHandler(BaseHTTPRequestHandler):
             self.handle_get_procurement()
         elif self.path == "/api/reports":
             self.handle_get_reports()
+        else:
+            self.send_json_response(404, {"error": "Endpoint not found"})
+            
+    def do_POST(self):
+        if self.path == "/api/employees":
+            self.handle_create_employee()
         else:
             self.send_json_response(404, {"error": "Endpoint not found"})
 
@@ -55,6 +61,24 @@ class InventoryHandler(BaseHTTPRequestHandler):
         }
 
         self.send_json_response(200, response)
+        
+    def handle_create_employee(self):
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_length)
+
+        try:
+            data = json.loads(body.decode("utf-8"))
+        except json.JSONDecodeError:
+            self.send_json_response(400, {"error": "Invalid JSON"})
+            return
+
+        service = EmployeeService()
+        result = service.create_employee(data)
+
+        if result.get("success"):
+            self.send_json_response(201, result)
+        else:
+            self.send_json_response(400, result)
 
     def handle_get_procurement(self):
         service = ProcurementService()
