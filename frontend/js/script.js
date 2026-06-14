@@ -39,7 +39,6 @@ function renderTable(title, columns, rows) {
     }
 
     html += "</tbody></table>";
-
     result.innerHTML = html;
 }
 
@@ -54,11 +53,11 @@ async function loadAssets() {
     renderTable(
         "Assets",
         [
-            { key: "id", Category: "ID" },
-            { key: "name", Category: "Asset Name" },
-            { key: "category_name", Category: "Category ID" },
-            { key: "employee_name", Category: "Assigned To" },
-            { key: "status", Category: "Status" }
+            { key: "id", label: "ID" },
+            { key: "name", label: "Asset Name" },
+            { key: "category_name", label: "Category" },
+            { key: "employee_name", label: "Assigned To" },
+            { key: "status", label: "Status" }
         ],
         data.items
     );
@@ -112,4 +111,39 @@ async function loadReport() {
             <p><strong>Available Assets:</strong> ${report.available_assets}</p>
         </div>
     `;
+}
+
+async function createAsset() {
+    const name = document.getElementById("asset_name").value;
+    const categoryId = document.getElementById("category_id").value;
+    const employeeId = document.getElementById("employee_id").value;
+    const status = document.getElementById("asset_status").value;
+
+    const assetData = {
+        name: name,
+        category_id: Number(categoryId),
+        employee_id: employeeId ? Number(employeeId) : null,
+        status: status
+    };
+
+    const response = await fetch(`${API_URL}/assets`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(assetData)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+        result.textContent = `Error: ${data.error || "Asset was not created"}`;
+        return;
+    }
+
+    document.getElementById("asset_name").value = "";
+    document.getElementById("category_id").value = "";
+    document.getElementById("employee_id").value = "";
+
+    await loadAssets();
 }

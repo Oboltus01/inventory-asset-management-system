@@ -89,3 +89,22 @@ th {
     background: #f8d7da;
     color: #721c24;
 }
+
+.form-section {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+}
+
+.form-section h2 {
+    margin-top: 0;
+}
+
+.form-section input,
+.form-section select {
+    padding: 8px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}

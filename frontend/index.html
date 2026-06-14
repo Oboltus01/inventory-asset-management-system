@@ -17,6 +17,23 @@
         <button onclick="loadReport()">Report</button>
     </div>
 
+    <div class="form-section">
+        <h2>Create Asset</h2>
+
+        <input type="text" id="asset_name" placeholder="Asset Name">
+
+        <input type="number" id="category_id" placeholder="Category ID">
+
+        <input type="number" id="employee_id" placeholder="Employee ID">
+
+        <select id="asset_status">
+            <option value="available">available</option>
+            <option value="assigned">assigned</option>
+        </select>
+
+        <button onclick="createAsset()">Create Asset</button>
+    </div>
+
     <pre id="result"></pre>
 
     <script src="js/script.js"></script>
