@@ -4,6 +4,33 @@ from repositories.database import DatabaseManager
 class ProcurementRepository:
     def __init__(self):
         self.db = DatabaseManager()
+        
+    def create_request(self, employee_id, category_id, item_name, reason, status="new"):
+        connection = self.db.get_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        sql = """
+            INSERT INTO procurement_requests
+                (employee_id, category_id, item_name, reason, status)
+            VALUES (%s, %s, %s, %s, %s);
+        """
+
+        cursor.execute(sql, (employee_id, category_id, item_name, reason, status))
+        connection.commit()
+
+        new_id = cursor.lastrowid
+
+        cursor.close()
+        connection.close()
+
+        return {
+            "id": new_id,
+            "employee_id": employee_id,
+            "category_id": category_id,
+            "item_name": item_name,
+            "reason": reason,
+            "status": status
+        }
 
     def get_all_requests(self):
         connection = self.db.get_connection()
