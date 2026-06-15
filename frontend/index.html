@@ -66,6 +66,36 @@
         <p id="employee_form_message" class="form-message"></p>
     </div>
 
+    <div class="form-section">
+        <h2>Create Procurement Request</h2>
+
+        <form id="procurement_form" onsubmit="createProcurement(event)">
+            <select id="procurement_employee_id" required>
+                <option value="">Select Employee</option>
+            </select>
+
+            <select id="procurement_category_id" required>
+                <option value="">Select Category</option>
+            </select>
+
+            <input type="text" id="procurement_item_name" placeholder="Item Name" required>
+
+            <input type="text" id="procurement_reason" placeholder="Reason">
+
+            <select id="procurement_status">
+                <option value="new">new</option>
+                <option value="approved">approved</option>
+                <option value="rejected">rejected</option>
+                <option value="purchased">purchased</option>
+            </select>
+
+            <button type="submit">Create Request</button>
+            <button type="button" onclick="resetProcurementForm()">Clear</button>
+        </form>
+
+        <p id="procurement_form_message" class="form-message"></p>
+    </div>
+
     <div id="result"></div>
 
     <script src="js/script.js"></script>

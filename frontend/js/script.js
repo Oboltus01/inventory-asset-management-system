@@ -3,7 +3,7 @@ const API_URL = "http://localhost:8001/api";
 const result = document.getElementById("result");
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadAssetFormOptions();
+    loadFormOptions();
 });
 
 async function getData(endpoint) {
@@ -66,38 +66,53 @@ function renderTable(title, columns, rows) {
     result.innerHTML = html;
 }
 
-async function loadAssetFormOptions() {
-    const message = document.getElementById("asset_form_message");
+function fillSelect(selectId, defaultText, items, textKey) {
+    const select = document.getElementById(selectId);
+
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = "";
+    select.appendChild(new Option(defaultText, ""));
+
+    for (const item of items) {
+        select.appendChild(
+            new Option(item[textKey], item.id)
+        );
+    }
+}
+
+async function loadFormOptions() {
+    const assetMessage = document.getElementById("asset_form_message");
+    const procurementMessage = document.getElementById("procurement_form_message");
 
     try {
         const categoriesData = await getData("categories");
         const employeesData = await getData("employees");
 
-        const categorySelect = document.getElementById("category_id");
-        const employeeSelect = document.getElementById("employee_id");
+        fillSelect("category_id", "Select Category", categoriesData.items, "name");
+        fillSelect("employee_id", "Not assigned", employeesData.items, "full_name");
 
-        categorySelect.innerHTML = "";
-        employeeSelect.innerHTML = "";
+        fillSelect("procurement_category_id", "Select Category", categoriesData.items, "name");
+        fillSelect("procurement_employee_id", "Select Employee", employeesData.items, "full_name");
 
-        categorySelect.appendChild(new Option("Select Category", ""));
-        employeeSelect.appendChild(new Option("Not assigned", ""));
-
-        for (const category of categoriesData.items) {
-            categorySelect.appendChild(
-                new Option(category.name, category.id)
-            );
+        if (assetMessage) {
+            assetMessage.textContent = "";
         }
 
-        for (const employee of employeesData.items) {
-            employeeSelect.appendChild(
-                new Option(employee.full_name, employee.id)
-            );
+        if (procurementMessage) {
+            procurementMessage.textContent = "";
         }
-
-        message.textContent = "";
 
     } catch (error) {
-        message.textContent = "Could not load categories or employees";
+        if (assetMessage) {
+            assetMessage.textContent = "Could not load categories or employees";
+        }
+
+        if (procurementMessage) {
+            procurementMessage.textContent = "Could not load categories or employees";
+        }
     }
 }
 
@@ -149,6 +164,7 @@ async function loadProcurement() {
             { key: "employee_name", label: "Employee" },
             { key: "category_name", label: "Category" },
             { key: "item_name", label: "Item" },
+            { key: "reason", label: "Reason" },
             { key: "status", label: "Status" }
         ],
         data.items
@@ -272,7 +288,7 @@ async function createEmployee(event) {
         message.textContent = "Employee created successfully";
 
         await loadEmployees();
-        await loadAssetFormOptions();
+        await loadFormOptions();
 
     } catch (error) {
         message.textContent = "Error: backend is not available";
@@ -282,4 +298,60 @@ async function createEmployee(event) {
 function resetEmployeeForm() {
     document.getElementById("employee_form").reset();
     document.getElementById("employee_form_message").textContent = "";
+}
+
+async function createProcurement(event) {
+    event.preventDefault();
+
+    const message = document.getElementById("procurement_form_message");
+
+    const employeeId = document.getElementById("procurement_employee_id").value;
+    const categoryId = document.getElementById("procurement_category_id").value;
+    const itemName = document.getElementById("procurement_item_name").value.trim();
+    const reason = document.getElementById("procurement_reason").value.trim();
+    const status = document.getElementById("procurement_status").value;
+
+    if (!employeeId || !categoryId || !itemName) {
+        message.textContent = "Employee, category and item name are required";
+        return;
+    }
+
+    const procurementData = {
+        employee_id: Number(employeeId),
+        category_id: Number(categoryId),
+        item_name: itemName,
+        reason: reason || null,
+        status: status
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/procurement`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(procurementData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            message.textContent = `Error: ${data.error || "Procurement request was not created"}`;
+            return;
+        }
+
+        resetProcurementForm();
+
+        message.textContent = "Procurement request created successfully";
+
+        await loadProcurement();
+
+    } catch (error) {
+        message.textContent = "Error: backend is not available";
+    }
+}
+
+function resetProcurementForm() {
+    document.getElementById("procurement_form").reset();
+    document.getElementById("procurement_form_message").textContent = "";
 }
