@@ -22,6 +22,7 @@ class AssetRepository:
                     a.category_id,
                     c.name AS category_name,
                     a.employee_id,
+                    a.location,
                     e.full_name AS employee_name,
                     a.status
                 FROM assets a
@@ -44,8 +45,9 @@ class AssetRepository:
                     employee_id=row["employee_id"],
                     employee_name=row.get("employee_name"),
                     status=row["status"],
-                    location=row.get("employee_name"),
+                    location=row.get("location"),
                 )
+
                 assets.append(asset.to_dict())
 
             return assets
@@ -53,28 +55,35 @@ class AssetRepository:
         finally:
             cursor.close()
             connection.close()
-            
-    def create_asset(self, name, category_id, employee_id, status):
+
+    def create_asset(self, name, category_id, employee_id, status, location=None):
         connection = self.db.get_connection()
-        cursor = connection.cursor(dictionary=True)
 
-        sql = """
-            INSERT INTO assets (name, category_id, employee_id, status)
-            VALUES (%s, %s, %s, %s);
-        """
+        if connection is None:
+            return None
 
-        cursor.execute(sql, (name, category_id, employee_id, status))
-        connection.commit()
+        try:
+            cursor = connection.cursor(dictionary=True)
 
-        new_id = cursor.lastrowid
+            sql = """
+                INSERT INTO assets (name, category_id, employee_id, location, status)
+                VALUES (%s, %s, %s, %s, %s);
+            """
 
-        cursor.close()
-        connection.close()
+            cursor.execute(sql, (name, category_id, employee_id, location, status))
+            connection.commit()
 
-        return {
-            "id": new_id,
-            "name": name,
-            "category_id": category_id,
-            "employee_id": employee_id,
-            "status": status
-        }
+            new_id = cursor.lastrowid
+
+            return {
+                "id": new_id,
+                "name": name,
+                "category_id": category_id,
+                "employee_id": employee_id,
+                "location": location,
+                "status": status
+            }
+
+        finally:
+            cursor.close()
+            connection.close()

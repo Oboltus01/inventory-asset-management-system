@@ -20,21 +20,34 @@
     <div class="form-section">
         <h2>Create Asset</h2>
 
-        <input type="text" id="asset_name" placeholder="Asset Name">
+        <form id="asset_form" onsubmit="createAsset(event)">
+            <input type="text" id="asset_name" placeholder="Asset Name" required>
 
-        <input type="number" id="category_id" placeholder="Category ID">
+            <select id="category_id" required>
+                <option value="">Select Category</option>
+            </select>
 
-        <input type="number" id="employee_id" placeholder="Employee ID">
+            <select id="employee_id">
+                <option value="">Not assigned</option>
+            </select>
 
-        <select id="asset_status">
-            <option value="available">available</option>
-            <option value="assigned">assigned</option>
-        </select>
+            <input type="text" id="asset_location" placeholder="Location">
 
-        <button onclick="createAsset()">Create Asset</button>
+            <select id="asset_status">
+                <option value="available">available</option>
+                <option value="assigned">assigned</option>
+                <option value="maintenance">maintenance</option>
+                <option value="retired">retired</option>
+            </select>
+
+            <button type="submit">Create Asset</button>
+            <button type="button" onclick="resetAssetForm()">Clear</button>
+        </form>
+
+        <p id="asset_form_message" class="form-message"></p>
     </div>
 
-    <pre id="result"></pre>
+    <div id="result"></div>
 
     <script src="js/script.js"></script>
 

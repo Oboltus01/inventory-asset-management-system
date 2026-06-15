@@ -13,6 +13,8 @@ class InventoryHandler(BaseHTTPRequestHandler):
             self.handle_health()
         elif self.path == "/api/assets":
             self.handle_get_assets()
+        elif self.path == "/api/categories":
+            self.handle_get_categories()
         elif self.path == "/api/employees":
             self.handle_get_employees()
         elif self.path == "/api/procurement":
@@ -21,6 +23,40 @@ class InventoryHandler(BaseHTTPRequestHandler):
             self.handle_get_reports()
         else:
             self.send_json_response(404, {"error": "Endpoint not found"})
+            
+    def handle_get_categories(self):
+        db = DatabaseManager()
+        connection = db.get_connection()
+
+        if connection is None:
+            self.send_json_response(500, {"error": "Database connection failed"})
+            return
+
+        try:
+            cursor = connection.cursor(dictionary=True)
+
+            query = """
+                SELECT
+                    id,
+                    name,
+                    description
+                FROM categories
+                ORDER BY name;
+            """
+
+            cursor.execute(query)
+            categories = cursor.fetchall()
+
+            response = {
+                "count": len(categories),
+                "items": categories
+            }
+
+            self.send_json_response(200, response)
+
+        finally:
+            cursor.close()
+            connection.close()
             
     def do_POST(self):
         if self.path == "/api/employees":

@@ -1,10 +1,11 @@
 body {
     font-family: Arial, sans-serif;
     margin: 30px;
+    color: #222222;
 }
 
 h1 {
-    color: #333;
+    color: #333333;
 }
 
 .buttons {
@@ -18,23 +19,34 @@ button {
     cursor: pointer;
 }
 
+button:hover {
+    opacity: 0.9;
+}
+
+#result {
+    margin-top: 20px;
+}
+
 pre {
     background-color: #f3f3f3;
     padding: 15px;
     border-radius: 5px;
     overflow-x: auto;
+    white-space: pre-wrap;
 }
 
 table {
     border-collapse: collapse;
     width: 100%;
     margin-top: 20px;
+    background-color: white;
 }
 
 th, td {
     border: 1px solid #cccccc;
     padding: 10px;
     text-align: left;
+    vertical-align: middle;
 }
 
 th {
@@ -54,10 +66,13 @@ th {
     margin: 10px 0;
     font-size: 16px;
 }
+
 .status {
+    display: inline-block;
     padding: 4px 8px;
     border-radius: 5px;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .status-available {
@@ -68,6 +83,16 @@ th {
 .status-assigned {
     background: #cce5ff;
     color: #004085;
+}
+
+.status-maintenance {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-retired {
+    background: #f8d7da;
+    color: #721c24;
 }
 
 .status-new {
@@ -102,9 +127,25 @@ th {
     margin-top: 0;
 }
 
+.form-section form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
 .form-section input,
 .form-section select {
     padding: 8px;
-    margin-right: 10px;
+    min-width: 180px;
     margin-bottom: 10px;
+}
+
+.form-section button {
+    margin-bottom: 10px;
+}
+
+.form-message {
+    margin-top: 5px;
+    font-weight: bold;
 }

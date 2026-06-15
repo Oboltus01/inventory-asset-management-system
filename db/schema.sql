@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS assets (
     serial_number VARCHAR(150) UNIQUE,
     category_id INT NOT NULL,
     employee_id INT NULL,
+    location VARCHAR(150) NULL,
     status ENUM('available', 'assigned', 'maintenance', 'retired') DEFAULT 'available',
     purchase_date DATE NULL,
     price DECIMAL(10,2) NULL,

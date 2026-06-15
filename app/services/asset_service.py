@@ -12,7 +12,10 @@ class AssetService:
         name = data.get("name")
         category_id = data.get("category_id")
         employee_id = data.get("employee_id")
+        location = data.get("location")
         status = data.get("status", "available")
+
+        allowed_statuses = ["available", "assigned", "maintenance", "retired"]
 
         if not name or not category_id:
             return {
@@ -20,11 +23,18 @@ class AssetService:
                 "error": "name and category_id are required"
             }
 
+        if status not in allowed_statuses:
+            return {
+                "success": False,
+                "error": "invalid asset status"
+            }
+
         asset = self.repository.create_asset(
             name,
             category_id,
             employee_id,
-            status
+            status,
+            location
         )
 
         return {
