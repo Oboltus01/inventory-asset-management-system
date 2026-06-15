@@ -177,14 +177,33 @@ async function loadReport() {
     const report = data.report;
 
     result.innerHTML = `
-        <h2>System Summary</h2>
+        <h2>System Dashboard</h2>
 
-        <div class="report-card">
-            <p><strong>Total Assets:</strong> ${escapeHtml(report.total_assets)}</p>
-            <p><strong>Total Employees:</strong> ${escapeHtml(report.total_employees)}</p>
-            <p><strong>Total Requests:</strong> ${escapeHtml(report.total_procurement_requests)}</p>
-            <p><strong>Assigned Assets:</strong> ${escapeHtml(report.assigned_assets)}</p>
-            <p><strong>Available Assets:</strong> ${escapeHtml(report.available_assets)}</p>
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h3>Total Assets</h3>
+                <p>${escapeHtml(report.total_assets)}</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Total Employees</h3>
+                <p>${escapeHtml(report.total_employees)}</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Total Requests</h3>
+                <p>${escapeHtml(report.total_procurement_requests)}</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Assigned Assets</h3>
+                <p>${escapeHtml(report.assigned_assets)}</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Available Assets</h3>
+                <p>${escapeHtml(report.available_assets)}</p>
+            </div>
         </div>
     `;
 }
