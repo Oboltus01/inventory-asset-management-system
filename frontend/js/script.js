@@ -2,6 +2,8 @@ const API_URL = "http://localhost:8001/api";
 
 const result = document.getElementById("result");
 
+let assetsCache = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     loadFormOptions();
 });
@@ -124,18 +126,100 @@ async function loadHealth() {
 async function loadAssets() {
     const data = await getData("assets");
 
-    renderTable(
-        "Assets",
-        [
-            { key: "id", label: "ID" },
-            { key: "name", label: "Asset Name" },
-            { key: "category_name", label: "Category" },
-            { key: "employee_name", label: "Assigned To" },
-            { key: "location", label: "Location" },
-            { key: "status", label: "Status" }
-        ],
-        data.items
-    );
+    assetsCache = data.items || [];
+
+    renderAssetsTable(assetsCache, "");
+}
+
+function renderAssetsTable(rows, searchText) {
+    const columns = [
+        { key: "id", label: "ID" },
+        { key: "name", label: "Asset Name" },
+        { key: "category_name", label: "Category" },
+        { key: "employee_name", label: "Assigned To" },
+        { key: "location", label: "Location" },
+        { key: "status", label: "Status" }
+    ];
+
+    let html = `
+        <h2>Assets</h2>
+
+        <div class="table-toolbar">
+            <input
+                type="text"
+                id="asset_search"
+                placeholder="Search assets..."
+                value="${escapeHtml(searchText)}"
+                oninput="filterAssets()"
+            >
+
+            <span class="table-counter">
+                Showing ${rows.length} of ${assetsCache.length} assets
+            </span>
+        </div>
+    `;
+
+    if (!rows || rows.length === 0) {
+        html += "<p>No assets found.</p>";
+        result.innerHTML = html;
+        return;
+    }
+
+    html += "<table>";
+    html += "<thead><tr>";
+
+    for (const column of columns) {
+        html += `<th>${escapeHtml(column.label)}</th>`;
+    }
+
+    html += "</tr></thead><tbody>";
+
+    for (const row of rows) {
+        html += "<tr>";
+
+        for (const column of columns) {
+            const value = row[column.key] ?? "";
+
+            if (column.key === "status") {
+                html += `<td><span class="status status-${escapeHtml(value)}">${escapeHtml(value)}</span></td>`;
+            } else {
+                html += `<td>${escapeHtml(value)}</td>`;
+            }
+        }
+
+        html += "</tr>";
+    }
+
+    html += "</tbody></table>";
+
+    result.innerHTML = html;
+
+    const searchInput = document.getElementById("asset_search");
+    searchInput.focus();
+    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+}
+
+function filterAssets() {
+    const searchText = document.getElementById("asset_search").value.trim().toLowerCase();
+
+    if (!searchText) {
+        renderAssetsTable(assetsCache, "");
+        return;
+    }
+
+    const filteredAssets = assetsCache.filter((asset) => {
+        const searchableText = [
+            asset.name,
+            asset.category_name,
+            asset.employee_name,
+            asset.location,
+            asset.status
+        ].join(" ").toLowerCase();
+
+        return searchableText.includes(searchText);
+    });
+
+    renderAssetsTable(filteredAssets, searchText);
 }
 
 async function loadEmployees() {

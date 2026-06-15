@@ -209,3 +209,25 @@ tr:nth-child(even) {
     font-weight: bold;
     margin: 0;
 }
+
+.table-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.table-toolbar input {
+    padding: 10px;
+    min-width: 260px;
+    border: 1px solid #b8bcc4;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.table-counter {
+    color: #555555;
+    font-weight: bold;
+}
