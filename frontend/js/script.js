@@ -52,11 +52,11 @@ function renderTable(title, columns, rows) {
         for (const column of columns) {
             const value = row[column.key] ?? "";
 
-if (column.key === "status") {
-    html += `<td><span class="status status-${escapeHtml(value)}">${escapeHtml(value)}</span></td>`;
-} else {
-    html += `<td>${escapeHtml(value)}</td>`;
-}
+            if (column.key === "status") {
+                html += `<td><span class="status status-${escapeHtml(value)}">${escapeHtml(value)}</span></td>`;
+            } else {
+                html += `<td>${escapeHtml(value)}</td>`;
+            }
         }
 
         html += "</tr>";
@@ -197,29 +197,89 @@ async function createAsset(event) {
         status: status
     };
 
-    const response = await fetch(`${API_URL}/assets`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(assetData)
-    });
+    try {
+        const response = await fetch(`${API_URL}/assets`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(assetData)
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    if (!response.ok || !data.success) {
-        message.textContent = `Error: ${data.error || "Asset was not created"}`;
-        return;
+        if (!response.ok || !data.success) {
+            message.textContent = `Error: ${data.error || "Asset was not created"}`;
+            return;
+        }
+
+        resetAssetForm();
+
+        message.textContent = "Asset created successfully";
+
+        await loadAssets();
+
+    } catch (error) {
+        message.textContent = "Error: backend is not available";
     }
-
-    resetAssetForm();
-
-    message.textContent = "Asset created successfully";
-
-    await loadAssets();
 }
 
 function resetAssetForm() {
     document.getElementById("asset_form").reset();
     document.getElementById("asset_form_message").textContent = "";
+}
+
+async function createEmployee(event) {
+    event.preventDefault();
+
+    const message = document.getElementById("employee_form_message");
+
+    const fullName = document.getElementById("employee_full_name").value.trim();
+    const email = document.getElementById("employee_email").value.trim();
+    const department = document.getElementById("employee_department").value.trim();
+    const position = document.getElementById("employee_position").value.trim();
+
+    if (!fullName || !email) {
+        message.textContent = "Full name and email are required";
+        return;
+    }
+
+    const employeeData = {
+        full_name: fullName,
+        email: email,
+        department: department || null,
+        position: position || null
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/employees`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(employeeData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            message.textContent = `Error: ${data.error || "Employee was not created"}`;
+            return;
+        }
+
+        resetEmployeeForm();
+
+        message.textContent = "Employee created successfully";
+
+        await loadEmployees();
+        await loadAssetFormOptions();
+
+    } catch (error) {
+        message.textContent = "Error: backend is not available";
+    }
+}
+
+function resetEmployeeForm() {
+    document.getElementById("employee_form").reset();
+    document.getElementById("employee_form_message").textContent = "";
 }

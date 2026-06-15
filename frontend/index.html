@@ -47,6 +47,25 @@
         <p id="asset_form_message" class="form-message"></p>
     </div>
 
+    <div class="form-section">
+        <h2>Create Employee</h2>
+
+        <form id="employee_form" onsubmit="createEmployee(event)">
+            <input type="text" id="employee_full_name" placeholder="Full Name" required>
+
+            <input type="email" id="employee_email" placeholder="Email" required>
+
+            <input type="text" id="employee_department" placeholder="Department">
+
+            <input type="text" id="employee_position" placeholder="Position">
+
+            <button type="submit">Create Employee</button>
+            <button type="button" onclick="resetEmployeeForm()">Clear</button>
+        </form>
+
+        <p id="employee_form_message" class="form-message"></p>
+    </div>
+
     <div id="result"></div>
 
     <script src="js/script.js"></script>
