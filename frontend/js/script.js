@@ -3,8 +3,8 @@ const API_URL = "http://localhost:8001/api";
 const result = document.getElementById("result");
 
 let assetsCache = [];
-
 let employeesCache = [];
+let procurementCache = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     loadFormOptions();
@@ -319,18 +319,100 @@ function filterEmployees() {
 async function loadProcurement() {
     const data = await getData("procurement");
 
-    renderTable(
-        "Procurement Requests",
-        [
-            { key: "id", label: "ID" },
-            { key: "employee_name", label: "Employee" },
-            { key: "category_name", label: "Category" },
-            { key: "item_name", label: "Item" },
-            { key: "reason", label: "Reason" },
-            { key: "status", label: "Status" }
-        ],
-        data.items
-    );
+    procurementCache = data.items || [];
+
+    renderProcurementTable(procurementCache, "");
+}
+
+function renderProcurementTable(rows, searchText) {
+    const columns = [
+        { key: "id", label: "ID" },
+        { key: "employee_name", label: "Employee" },
+        { key: "category_name", label: "Category" },
+        { key: "item_name", label: "Item" },
+        { key: "reason", label: "Reason" },
+        { key: "status", label: "Status" }
+    ];
+
+    let html = `
+        <h2>Procurement Requests</h2>
+
+        <div class="table-toolbar">
+            <input
+                type="text"
+                id="procurement_search"
+                placeholder="Search procurement requests..."
+                value="${escapeHtml(searchText)}"
+                oninput="filterProcurement()"
+            >
+
+            <span class="table-counter">
+                Showing ${rows.length} of ${procurementCache.length} requests
+            </span>
+        </div>
+    `;
+
+    if (!rows || rows.length === 0) {
+        html += "<p>No procurement requests found.</p>";
+        result.innerHTML = html;
+        return;
+    }
+
+    html += "<table>";
+    html += "<thead><tr>";
+
+    for (const column of columns) {
+        html += `<th>${escapeHtml(column.label)}</th>`;
+    }
+
+    html += "</tr></thead><tbody>";
+
+    for (const row of rows) {
+        html += "<tr>";
+
+        for (const column of columns) {
+            const value = row[column.key] ?? "";
+
+            if (column.key === "status") {
+                html += `<td><span class="status status-${escapeHtml(value)}">${escapeHtml(value)}</span></td>`;
+            } else {
+                html += `<td>${escapeHtml(value)}</td>`;
+            }
+        }
+
+        html += "</tr>";
+    }
+
+    html += "</tbody></table>";
+
+    result.innerHTML = html;
+
+    const searchInput = document.getElementById("procurement_search");
+    searchInput.focus();
+    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+}
+
+function filterProcurement() {
+    const searchText = document.getElementById("procurement_search").value.trim().toLowerCase();
+
+    if (!searchText) {
+        renderProcurementTable(procurementCache, "");
+        return;
+    }
+
+    const filteredProcurement = procurementCache.filter((request) => {
+        const searchableText = [
+            request.employee_name,
+            request.category_name,
+            request.item_name,
+            request.reason,
+            request.status
+        ].join(" ").toLowerCase();
+
+        return searchableText.includes(searchText);
+    });
+
+    renderProcurementTable(filteredProcurement, searchText);
 }
 
 async function loadReport() {
