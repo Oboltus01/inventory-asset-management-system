@@ -4,6 +4,8 @@ const result = document.getElementById("result");
 
 let assetsCache = [];
 
+let employeesCache = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     loadFormOptions();
 });
@@ -225,17 +227,93 @@ function filterAssets() {
 async function loadEmployees() {
     const data = await getData("employees");
 
-    renderTable(
-        "Employees",
-        [
-            { key: "id", label: "ID" },
-            { key: "full_name", label: "Name" },
-            { key: "email", label: "Email" },
-            { key: "department", label: "Department" },
-            { key: "position", label: "Position" }
-        ],
-        data.items
-    );
+    employeesCache = data.items || [];
+
+    renderEmployeesTable(employeesCache, "");
+}
+
+function renderEmployeesTable(rows, searchText) {
+    const columns = [
+        { key: "id", label: "ID" },
+        { key: "full_name", label: "Name" },
+        { key: "email", label: "Email" },
+        { key: "department", label: "Department" },
+        { key: "position", label: "Position" }
+    ];
+
+    let html = `
+        <h2>Employees</h2>
+
+        <div class="table-toolbar">
+            <input
+                type="text"
+                id="employee_search"
+                placeholder="Search employees..."
+                value="${escapeHtml(searchText)}"
+                oninput="filterEmployees()"
+            >
+
+            <span class="table-counter">
+                Showing ${rows.length} of ${employeesCache.length} employees
+            </span>
+        </div>
+    `;
+
+    if (!rows || rows.length === 0) {
+        html += "<p>No employees found.</p>";
+        result.innerHTML = html;
+        return;
+    }
+
+    html += "<table>";
+    html += "<thead><tr>";
+
+    for (const column of columns) {
+        html += `<th>${escapeHtml(column.label)}</th>`;
+    }
+
+    html += "</tr></thead><tbody>";
+
+    for (const row of rows) {
+        html += "<tr>";
+
+        for (const column of columns) {
+            const value = row[column.key] ?? "";
+            html += `<td>${escapeHtml(value)}</td>`;
+        }
+
+        html += "</tr>";
+    }
+
+    html += "</tbody></table>";
+
+    result.innerHTML = html;
+
+    const searchInput = document.getElementById("employee_search");
+    searchInput.focus();
+    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+}
+
+function filterEmployees() {
+    const searchText = document.getElementById("employee_search").value.trim().toLowerCase();
+
+    if (!searchText) {
+        renderEmployeesTable(employeesCache, "");
+        return;
+    }
+
+    const filteredEmployees = employeesCache.filter((employee) => {
+        const searchableText = [
+            employee.full_name,
+            employee.email,
+            employee.department,
+            employee.position
+        ].join(" ").toLowerCase();
+
+        return searchableText.includes(searchText);
+    });
+
+    renderEmployeesTable(filteredEmployees, searchText);
 }
 
 async function loadProcurement() {
