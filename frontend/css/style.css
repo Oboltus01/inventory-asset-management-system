@@ -1,30 +1,47 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 30px;
+    margin: 0 auto;
+    padding: 30px;
+    max-width: 1600px;
     color: #222222;
+    background-color: #f4f6f8;
 }
 
 h1 {
-    color: #333333;
+    color: #222222;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+h2 {
+    color: #222222;
 }
 
 .buttons {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 button {
-    padding: 10px 15px;
+    padding: 10px 16px;
     margin-right: 10px;
     margin-bottom: 10px;
     cursor: pointer;
+    border: 1px solid #b8bcc4;
+    border-radius: 6px;
+    background-color: #ffffff;
+    font-size: 14px;
 }
 
 button:hover {
-    opacity: 0.9;
+    background-color: #eef2f7;
 }
 
 #result {
-    margin-top: 20px;
+    margin-top: 25px;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #d6d9de;
+    border-radius: 8px;
 }
 
 pre {
@@ -39,22 +56,27 @@ table {
     border-collapse: collapse;
     width: 100%;
     margin-top: 20px;
-    background-color: white;
+    background-color: #ffffff;
 }
 
 th, td {
     border: 1px solid #cccccc;
-    padding: 10px;
+    padding: 12px;
     text-align: left;
     vertical-align: middle;
 }
 
 th {
     background-color: #eeeeee;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #fafafa;
 }
 
 .report-card {
-    background: white;
+    background: #ffffff;
     padding: 20px;
     border: 1px solid #cccccc;
     border-radius: 6px;
@@ -69,8 +91,8 @@ th {
 
 .status {
     display: inline-block;
-    padding: 4px 8px;
-    border-radius: 5px;
+    padding: 5px 9px;
+    border-radius: 6px;
     font-weight: bold;
     white-space: nowrap;
 }
@@ -117,14 +139,15 @@ th {
 
 .form-section {
     margin: 20px 0;
-    padding: 15px;
-    border: 1px solid #cccccc;
-    border-radius: 6px;
-    background-color: #f8f9fa;
+    padding: 20px;
+    border: 1px solid #d6d9de;
+    border-radius: 8px;
+    background-color: #ffffff;
 }
 
 .form-section h2 {
     margin-top: 0;
+    margin-bottom: 18px;
 }
 
 .form-section form {
@@ -136,9 +159,19 @@ th {
 
 .form-section input,
 .form-section select {
-    padding: 8px;
-    min-width: 180px;
+    padding: 10px;
+    min-width: 190px;
     margin-bottom: 10px;
+    border: 1px solid #b8bcc4;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #ffffff;
+}
+
+.form-section input:focus,
+.form-section select:focus {
+    outline: none;
+    border-color: #6c8ebf;
 }
 
 .form-section button {
@@ -146,9 +179,11 @@ th {
 }
 
 .form-message {
-    margin-top: 5px;
+    margin-top: 8px;
+    margin-bottom: 0;
     font-weight: bold;
 }
+
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -157,7 +192,7 @@ th {
 }
 
 .dashboard-card {
-    background: white;
+    background: #ffffff;
     border: 1px solid #cccccc;
     border-radius: 8px;
     padding: 20px;
