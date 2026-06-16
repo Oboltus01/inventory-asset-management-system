@@ -93,6 +93,9 @@ Inventory_Asset_Management_System
 │   ├── css
 │   └── js
 │
+├── scripts
+│   └── git_checkpoint.ps1
+│
 ├── docker-compose.yml
 ├── Dockerfile
 ├── requirements.txt
@@ -129,7 +132,12 @@ docker ps
 | Application | URL |
 |---|---|
 | Frontend | `http://localhost:3000` |
+| Backend Health API | `http://localhost:8001/api/health` |
 | Backend Assets API | `http://localhost:8001/api/assets` |
+| Backend Categories API | `http://localhost:8001/api/categories` |
+| Backend Employees API | `http://localhost:8001/api/employees` |
+| Backend Procurement API | `http://localhost:8001/api/procurement` |
+| Backend Reports API | `http://localhost:8001/api/reports` |
 | phpMyAdmin | `http://localhost:8081` |
 
 ---
@@ -219,23 +227,25 @@ Implemented:
 - Docker Compose environment
 - MariaDB database
 - Backend container
-- Frontend container
+- Frontend nginx container
 - phpMyAdmin container
 - Database schema
+- Health API
 - Assets API
-- Basic frontend structure
+- Categories API
+- Employees API
+- Procurement API
+- Reports API
 - Asset creation form
-- Initial asset test data
+- Employee creation form
+- Procurement request creation form
+- Report dashboard
+- Search/filter for assets
+- Search/filter for employees
+- Search/filter for procurement requests
+- Git checkpoint script
 - Project documentation
 - Screenshots for project presentation
-
-In progress:
-
-- Employee management improvements
-- Procurement workflow
-- Reports page
-- Audit logging improvements
-- Additional validation
 
 ---
 
@@ -245,7 +255,6 @@ Possible future improvements:
 
 - Add authentication
 - Add user roles
-- Add asset search and filters
 - Add asset edit form
 - Add asset delete/archive option
 - Add CSV export
