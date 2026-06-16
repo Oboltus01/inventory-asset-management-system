@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Asset Management System - Presentation</title>
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --accent: #2563eb;
+            --border: #dbe3ef;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .deck {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .slide {
+            min-height: 90vh;
+            margin-bottom: 28px;
+            padding: 46px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .title-slide {
+            background: linear-gradient(135deg, #1d4ed8, #0f172a);
+            color: white;
+        }
+
+        h1 {
+            font-size: 54px;
+            line-height: 1.1;
+            margin: 0 0 24px;
+        }
+
+        h2 {
+            font-size: 40px;
+            margin: 0 0 22px;
+            color: var(--accent);
+        }
+
+        .title-slide h2 {
+            color: #bfdbfe;
+        }
+
+        h3 {
+            font-size: 24px;
+            margin: 20px 0 10px;
+        }
+
+        p, li {
+            font-size: 22px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .title-slide .muted {
+            color: #dbeafe;
+        }
+
+        ul {
+            margin: 8px 0 0 26px;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .box {
+            padding: 22px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: #f8fafc;
+        }
+
+        .box strong {
+            color: var(--accent);
+        }
+
+        code {
+            font-size: 20px;
+            background: #eef2ff;
+            color: #1e3a8a;
+            padding: 3px 8px;
+            border-radius: 8px;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 20px;
+            border-radius: 14px;
+            background: #0f172a;
+            color: #e5e7eb;
+            font-size: 19px;
+        }
+
+        img {
+            width: 100%;
+            max-height: 540px;
+            object-fit: contain;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: white;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .caption {
+            margin-top: 12px;
+            font-size: 18px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 22px;
+            font-size: 18px;
+            color: var(--muted);
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .deck {
+                padding: 0;
+            }
+
+            .slide {
+                min-height: 100vh;
+                page-break-after: always;
+                border: none;
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="deck">
+        <section class="slide title-slide">
+            <h1>Inventory Asset Management System</h1>
+            <h2>Final Course Project</h2>
+            <p>Enterprise-style web application for managing IT assets, employees, procurement requests, and reports.</p>
+            <p class="muted">Python HTTPServer · MariaDB · Docker Compose · Nginx Frontend · GitHub</p>
+        </section>
+
+        <section class="slide">
+            <h2>Project Idea</h2>
+            <p>The project solves a typical IT department task: tracking company equipment from registration to assignment, availability, procurement, and reporting.</p>
+            <div class="grid">
+                <div class="box"><strong>Assets</strong><br>Register and track company equipment.</div>
+                <div class="box"><strong>Employees</strong><br>Link assets to responsible employees.</div>
+                <div class="box"><strong>Procurement</strong><br>Create and track purchase requests.</div>
+                <div class="box"><strong>Reports</strong><br>Show inventory summary and statistics.</div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Architecture</h2>
+            <div class="grid">
+                <div class="box"><strong>Frontend</strong><br>HTML, CSS, JavaScript served by Nginx.</div>
+                <div class="box"><strong>Backend</strong><br>Python HTTPServer with JSON API endpoints.</div>
+                <div class="box"><strong>Database</strong><br>MariaDB stores assets, employees, categories, procurement requests, and audit logs.</div>
+                <div class="box"><strong>DevOps</strong><br>Docker Compose starts the whole system with one command.</div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Docker Compose Services</h2>
+            <pre>inventory_backend      8001:8001   Python backend API
+inventory_frontend     3000:80     Nginx frontend
+inventory_mariadb      3307:3306   MariaDB database
+inventory_phpmyadmin   8081:80     Database web UI</pre>
+            <p>Docker Compose makes the environment reproducible and easy to start on another machine.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Docker Containers Screenshot</h2>
+            <img src="docs/screenshots/docker_containers_ports.png" alt="Docker containers ports screenshot">
+            <div class="caption">Running containers and exposed ports.</div>
+        </section>
+
+        <section class="slide">
+            <h2>Backend API Endpoints</h2>
+            <pre>GET  http://localhost:8001/api/health
+GET  http://localhost:8001/api/assets
+GET  http://localhost:8001/api/categories
+GET  http://localhost:8001/api/employees
+GET  http://localhost:8001/api/procurement
+GET  http://localhost:8001/api/reports</pre>
+            <p>The frontend uses these API endpoints to load data and update the page.</p>
+        </section>
+
+        <section class="slide">
+            <h2>API Response Screenshot</h2>
+            <img src="docs/screenshots/api_assets.png" alt="Assets API response screenshot">
+            <div class="caption">Example JSON response from the Assets API.</div>
+        </section>
+
+        <section class="slide">
+            <h2>Database</h2>
+            <p>Main database tables:</p>
+            <ul>
+                <li><code>assets</code> — company equipment</li>
+                <li><code>employees</code> — employees responsible for assets</li>
+                <li><code>categories</code> — asset categories</li>
+                <li><code>procurement_requests</code> — purchase requests</li>
+                <li><code>audit_logs</code> — system activity log concept</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Database Screenshot</h2>
+            <img src="docs/screenshots/database_assets_table.png" alt="Database assets table screenshot">
+            <div class="caption">Assets table in phpMyAdmin.</div>
+        </section>
+
+        <section class="slide">
+            <h2>Frontend Demo</h2>
+            <img src="docs/screenshots/frontend_assets.png" alt="Frontend assets page screenshot">
+            <div class="caption">Frontend page with asset data.</div>
+        </section>
+
+        <section class="slide">
+            <h2>Implemented Features</h2>
+            <ul>
+                <li>Docker Compose environment</li>
+                <li>Python backend API</li>
+                <li>MariaDB database schema</li>
+                <li>Frontend forms for assets, employees, and procurement</li>
+                <li>Search/filter for assets, employees, and procurement requests</li>
+                <li>Report dashboard</li>
+                <li>Git checkpoint script and project documentation</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Future Improvements</h2>
+            <ul>
+                <li>Add authentication and user roles</li>
+                <li>Add edit/archive operations</li>
+                <li>Add CSV/PDF export</li>
+                <li>Add dashboard charts</li>
+                <li>Add automated tests and CI/CD pipeline</li>
+                <li>Add backup and restore scripts</li>
+            </ul>
+        </section>
+
+        <section class="slide title-slide">
+            <h1>Thank You</h1>
+            <p>GitHub repository:</p>
+            <p><code>https://github.com/Oboltus01/inventory-asset-management-system</code></p>
+            <p class="muted">Inventory Asset Management System · Final Project</p>
+        </section>
+    </main>
+</body>
+</html>
