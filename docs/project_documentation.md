@@ -47,6 +47,7 @@ Each employee contains:
 - Full name
 - Department
 - Email
+- Position
 
 This makes it possible to see which employee is responsible for each asset.
 
@@ -62,6 +63,7 @@ Examples:
 - monitors
 - network devices
 - office equipment
+- software licenses
 - other
 
 Categories help organize the inventory and simplify filtering and reporting.
@@ -74,19 +76,20 @@ The procurement module is used to register requests for new equipment.
 
 A procurement request may include:
 
-- Requested item name
+- Employee
 - Category
-- Requester
-- Quantity
+- Item name
+- Reason
 - Status
 - Creation date
+- Update date
 
 Example request statuses:
 
-- pending
+- new
 - approved
 - rejected
-- completed
+- purchased
 
 ---
 
@@ -99,8 +102,7 @@ Examples of useful reports:
 - Total number of assets
 - Available assets
 - Assigned assets
-- Assets by category
-- Assets by employee
+- Total employees
 - Procurement request statistics
 
 ---
@@ -177,6 +179,10 @@ Inventory_Asset_Management_System
 │   ├── css
 │   │   └── style.css
 │   └── js
+│       └── script.js
+│
+├── scripts
+│   └── git_checkpoint.ps1
 │
 ├── docker-compose.yml
 ├── Dockerfile
@@ -212,6 +218,7 @@ Inventory_Asset_Management_System
 - Docker
 - Docker Compose
 - phpMyAdmin for database inspection
+- Git checkpoint script
 
 ---
 
@@ -288,7 +295,7 @@ Port mapping:
 Purpose:
 
 - Serves the web interface
-- Allows the user to view and manage assets from the browser
+- Allows the user to view and manage assets, employees, procurement requests, and reports from the browser
 
 ---
 
@@ -355,6 +362,8 @@ Main fields:
 
 - id
 - name
+- description
+- created_at
 
 ---
 
@@ -366,8 +375,11 @@ Main fields:
 
 - id
 - full_name
-- department
 - email
+- department
+- position
+- is_active
+- created_at
 
 ---
 
@@ -378,12 +390,13 @@ Stores equipment purchase requests.
 Main fields:
 
 - id
-- item_name
+- employee_id
 - category_id
-- requester_id
-- quantity
+- item_name
+- reason
 - status
 - created_at
+- updated_at
 
 ---
 
@@ -394,14 +407,36 @@ Stores system activity logs.
 Main fields:
 
 - id
-- action
 - entity_type
 - entity_id
+- action
+- description
 - created_at
 
 ---
 
 ## 7. API Endpoints
+
+### Health API
+
+Base path:
+
+```text
+/api/health
+```
+
+Example request:
+
+```text
+GET http://localhost:8001/api/health
+```
+
+Purpose:
+
+- Check that the backend is running
+- Check database connection status
+
+---
 
 ### Assets API
 
@@ -416,6 +451,13 @@ Example request:
 ```text
 GET http://localhost:8001/api/assets
 ```
+
+Purpose:
+
+- View assets
+- Create assets
+- Display assets in the frontend table
+- Use search/filter in the frontend
 
 Example response:
 
@@ -442,40 +484,25 @@ Example response:
       "employee_name": null,
       "location": "Storage Room",
       "status": "available"
-    },
-    {
-      "id": 3,
-      "name": "Cisco Switch 24 Port",
-      "category_id": 3,
-      "category_name": "network devices",
-      "employee_id": null,
-      "employee_name": null,
-      "location": "Server Room",
-      "status": "available"
-    },
-    {
-      "id": 4,
-      "name": "Mikrotik Router",
-      "category_id": 3,
-      "category_name": "network devices",
-      "employee_id": null,
-      "employee_name": null,
-      "location": "Network Rack",
-      "status": "available"
-    },
-    {
-      "id": 5,
-      "name": "Bomba",
-      "category_id": 6,
-      "category_name": "other",
-      "employee_id": 1,
-      "employee_name": "Admin User",
-      "location": "Storage Room",
-      "status": "available"
     }
   ]
 }
 ```
+
+---
+
+### Categories API
+
+Base path:
+
+```text
+/api/categories
+```
+
+Purpose:
+
+- View asset categories
+- Fill category dropdown lists in frontend forms
 
 ---
 
@@ -492,6 +519,7 @@ Purpose:
 - View employees
 - Add employees
 - Use employees when assigning assets
+- Use search/filter in the frontend
 
 ---
 
@@ -507,7 +535,8 @@ Purpose:
 
 - Create procurement requests
 - View existing requests
-- Update request statuses
+- Track request statuses
+- Use search/filter in the frontend
 
 ---
 
@@ -524,6 +553,7 @@ Purpose:
 - Show inventory statistics
 - Show asset distribution
 - Show procurement summaries
+- Provide data for the frontend dashboard
 
 ---
 
@@ -657,7 +687,13 @@ Open the frontend:
 http://localhost:3000
 ```
 
-Open the backend API:
+Open the backend health API:
+
+```text
+http://localhost:8001/api/health
+```
+
+Open the backend assets API:
 
 ```text
 http://localhost:8001/api/assets
@@ -685,6 +721,22 @@ This command imports the SQL schema into the MariaDB container.
 
 ## 12. Example Test
 
+To test the Health API, open in the browser:
+
+```text
+http://localhost:8001/api/health
+```
+
+Expected result:
+
+```json
+{
+  "status": "ok",
+  "service": "Inventory Asset Management Backend",
+  "database": "connected"
+}
+```
+
 To test the Assets API, open in the browser:
 
 ```text
@@ -697,59 +749,33 @@ Expected example result:
 The API should return JSON with the total asset count and the asset records.
 ```
 
-Example:
-
-```json
-{
-  "count": 5,
-  "items": [
-    {
-      "id": 1,
-      "name": "Dell Latitude 5420",
-      "category_name": "laptops",
-      "employee_name": "Admin User",
-      "location": "IT Office",
-      "status": "assigned"
-    },
-    {
-      "id": 2,
-      "name": "HP Monitor 24",
-      "category_name": "monitors",
-      "employee_name": null,
-      "location": "Storage Room",
-      "status": "available"
-    }
-  ]
-}
-```
-
 ---
 
 ## 13. Current Project Status
 
 Implemented:
 
-- Project folder structure
 - Docker Compose configuration
 - MariaDB container
 - Backend container
-- Frontend container
+- Frontend nginx container
 - phpMyAdmin container
 - Database schema
+- Health API
 - Assets API
-- Initial test data
-- Basic asset listing
-- Frontend asset table
+- Categories API
+- Employees API
+- Procurement API
+- Reports API
 - Asset creation form
-- Database inspection through phpMyAdmin
-
-In progress:
-
-- Employee management improvements
-- Procurement workflow
-- Reports page
-- Better validation
-- More complete audit logging
+- Employee creation form
+- Procurement request creation form
+- Report dashboard
+- Search/filter for assets
+- Search/filter for employees
+- Search/filter for procurement requests
+- Git checkpoint script
+- Screenshots for project presentation
 
 ---
 
@@ -759,7 +785,6 @@ Possible improvements:
 
 - Add authentication
 - Add user roles
-- Add asset search and filters
 - Add asset edit form
 - Add asset delete/archive option
 - Add CSV export
@@ -778,277 +803,3 @@ Project screenshots are stored in:
 ```text
 docs\screenshots
 ```
-
-Recommended screenshots:
-
-```text
-docker_containers_vscode.png
-docker_containers_ports.png
-api_assets.png
-database_assets_table.png
-frontend_assets.png
-```
-
-### Screenshot Description
-
-| Screenshot | Description |
-|---|---|
-| `docker_containers_vscode.png` | Shows running Docker containers in VS Code |
-| `docker_containers_ports.png` | Shows running containers and exposed ports in Docker Desktop |
-| `api_assets.png` | Shows the backend Assets API response |
-| `database_assets_table.png` | Shows the `assets` table in phpMyAdmin |
-| `frontend_assets.png` | Shows the frontend Assets page |
-
-### Screenshot Preview
-
-Frontend:
-
-![Frontend Assets Page](screenshots/frontend_assets.png)
-
-Backend API:
-
-![Assets API Response](screenshots/api_assets.png)
-
-Database table:
-
-![Database Assets Table](screenshots/database_assets_table.png)
-
-Docker containers:
-
-![Docker Containers in VS Code](screenshots/docker_containers_vscode.png)
-
-Docker containers and ports:
-
-![Docker Containers Ports](screenshots/docker_containers_ports.png)
-
----
-
-## 16. Demo Scenario
-
-This section describes a simple demonstration flow for the project.
-
-### Step 1: Start the system
-
-Run Docker Compose from the project root folder:
-
-```powershell
-docker compose up -d --build
-```
-
-After startup, the following containers should be running:
-
-```text
-inventory_mariadb
-inventory_backend
-inventory_frontend
-inventory_phpmyadmin
-```
-
----
-
-### Step 2: Open the frontend
-
-Open the frontend in the browser:
-
-```text
-http://localhost:3000
-```
-
-The user should see the main web interface of the Inventory and Asset Management System.
-
----
-
-### Step 3: Check the Assets API
-
-Open the Assets API endpoint:
-
-```text
-http://localhost:8001/api/assets
-```
-
-The endpoint should return a JSON response with asset records.
-
----
-
-### Step 4: Open phpMyAdmin
-
-Open phpMyAdmin:
-
-```text
-http://localhost:8081
-```
-
-The database should contain the following tables:
-
-```text
-assets
-categories
-employees
-procurement_requests
-audit_logs
-```
-
----
-
-## 17. Manual Testing Checklist
-
-### Docker
-
-- [ ] Docker Compose starts without errors
-- [ ] MariaDB container is running
-- [ ] Backend container is running
-- [ ] Frontend container is running
-- [ ] phpMyAdmin container is running
-
-### Backend API
-
-- [ ] `/api/assets` returns JSON
-- [ ] Assets response contains `count`
-- [ ] Assets response contains `items`
-- [ ] Asset records contain id, name, category, employee, status, and location fields
-
-### Database
-
-- [ ] Database connection works
-- [ ] Schema is imported successfully
-- [ ] Test data exists in the database
-- [ ] Assets table contains sample assets
-- [ ] Categories table contains sample categories
-- [ ] Employees table contains sample employees
-
-### Frontend
-
-- [ ] Frontend opens at `http://localhost:3000`
-- [ ] Assets are displayed in the browser
-- [ ] Asset form is visible
-- [ ] Asset table layout is readable
-
----
-
-## 18. Troubleshooting
-
-### Backend does not start
-
-Check backend logs:
-
-```powershell
-docker logs inventory_backend
-```
-
-Possible reasons:
-
-- Missing Python package
-- Wrong database connection settings
-- MariaDB container is not ready yet
-- Incorrect `.env` values
-
----
-
-### Database connection error
-
-Check if MariaDB is running:
-
-```powershell
-docker ps
-```
-
-Check MariaDB logs:
-
-```powershell
-docker logs inventory_mariadb
-```
-
-Verify that `.env` contains correct values:
-
-```env
-DB_HOST=inventory_mariadb
-DB_PORT=3306
-DB_NAME=inventory_db
-DB_USER=inventory_user
-DB_PASSWORD=inventory_pass
-```
-
-Inside Docker Compose, the backend should connect to MariaDB by container name:
-
-```text
-inventory_mariadb
-```
-
-The backend should not use `localhost` for the database connection inside Docker.
-
----
-
-### API returns empty list
-
-If the API returns:
-
-```json
-{
-  "count": 0,
-  "items": []
-}
-```
-
-Possible reasons:
-
-- Database schema exists, but test data was not inserted
-- The wrong database is being used
-- The backend is connected to a different MariaDB instance
-
-Reload the schema manually:
-
-```powershell
-Get-Content .\db\schema.sql | docker exec -i inventory_mariadb mariadb -u inventory_user -pinventory_pass inventory_db
-```
-
----
-
-### Frontend does not show data
-
-Check that the backend API works first:
-
-```text
-http://localhost:8001/api/assets
-```
-
-If the API works but the frontend does not show data, possible reasons are:
-
-- Wrong API URL in JavaScript
-- Browser cache
-- Frontend container was not rebuilt
-- JavaScript error in the browser console
-
----
-
-## 19. Project Limitations
-
-The current version is a learning project and does not yet include all enterprise features.
-
-Current limitations:
-
-- No authentication
-- No user roles
-- No advanced search
-- No full CRUD interface for all entities
-- No production-grade security configuration
-- No automated test pipeline
-- No backup and restore automation
-
-These limitations are planned as possible future improvements.
-
----
-
-## 20. Conclusion
-
-The Inventory and Asset Management System demonstrates a practical enterprise-style application with backend, frontend, relational database, Docker deployment, and modular architecture.
-
-The project is suitable as a final DevOps course project because it includes:
-
-- Database design
-- Backend API
-- Frontend interface
-- Docker-based deployment
-- Environment configuration
-- Multi-container architecture
-- Basic enterprise workflow
-- Audit and reporting concepts
